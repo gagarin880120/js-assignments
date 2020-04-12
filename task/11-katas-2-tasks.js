@@ -36,7 +36,22 @@
  *
  */
 function parseBankAccount(bankAccount) {
-  throw new Error('Not implemented');
+  const digits = [
+    ' _ | ||_|', '     |  |', ' _  _||_ ',
+    ' _  _| _|', '   |_|  |', ' _ |_  _|',
+    ' _ |_ |_|', ' _   |  |', ' _ |_||_|', ' _ |_| _|'
+  ];
+  let rows = bankAccount.split('\n');
+
+  rows.pop();
+  let result = 0;
+  while (rows[0].length > 0) {
+    result = result * 10 + digits.indexOf(
+      rows[0].slice(0, 3) + rows[1].slice(0, 3) + rows[2].slice(0, 3)
+    );
+    rows = rows.map(v => v.slice(3));
+  }
+  return result;
 }
 
 
@@ -68,7 +83,25 @@ function parseBankAccount(bankAccount) {
  *      'characters.'
  */
 function* wrapText(text, columns) {
-  throw new Error('Not implemented');
+  if (columns > text.length) {
+    yield text;
+  } else {
+    const arr =  text.split(' ');
+    let str = '';
+    let prev = '';
+    for (let i = 0; i < arr.length; i += 1) {
+      str += `${arr[i]} `;
+      if (str.length > columns + 1) {
+        yield prev.trim();
+        str =  `${arr[i]} `;
+      }
+      if (i === arr.length - 1) {
+        yield `${arr[i]}`;
+      }
+      prev = str;
+    }
+  }
+
 }
 
 
@@ -105,7 +138,78 @@ const PokerRank = {
 };
 
 function getPokerHandRank(hand) {
-  throw new Error('Not implemented');
+  const straightCases = [
+    ['2', '3', '4', '5', '6'], ['3', '4', '5', '6', '7'],
+    ['4', '5', '6', '7', '8'], ['5', '6', '7', '8', '9'],
+    ['6', '7', '8', '9', '10'], ['7', '8', '9', '10', 'J'],
+    ['8', '9', '10', 'J', 'Q'], ['9', '10', 'J', 'Q', 'K'],
+    ['10', 'J', 'Q', 'K', 'A']
+  ];
+  const cardCheck = arr => {
+    const ranks = [...new Set(arr.map(v => v.slice(0, -1)))];
+    for (let j = 0; j < straightCases.length; j += 1) {
+      let counter = 0;
+      for (let i = 0; i < ranks.length; i+= 1) {
+        const filtered = arr.filter(v => v.slice(0, -1) === ranks[i]);
+        if (ranks.length === 2) {
+          if (filtered.length === 4) {
+            return 'fourOfKind';
+          }
+        }
+        if (ranks.length === 3) {
+          if (filtered.length === 3) {
+            return 'threeOfKind';
+          }
+          if (filtered.length === 2) {
+            return 'twoPairs';
+          }
+        }
+        if (ranks.length === 4) {
+          if (filtered.length === 2) {
+            return 'onePair';
+          }
+        }
+        if (straightCases[j].includes(ranks[i])) {
+          counter += 1;
+          if (counter === 5
+            || ((j === 0 && counter === 4)
+            && ranks.includes('A'))) {
+            return 'straight';
+          }
+        }
+      }
+      if (ranks.length === 2
+        && ([...new Set(arr.map(v => v.slice(-1)))].length >= 3)) {
+        return 'fullHouse';
+      }
+    }
+  };
+  const suits = hand.map(v => v.slice(-1));
+  if (cardCheck(hand) === 'straight') {
+    if ([...new Set(suits)].length === 1) {
+      return PokerRank.StraightFlush;
+    }
+    return PokerRank.Straight;
+  }
+  if (cardCheck(hand) === 'fourOfKind') {
+    return PokerRank.FourOfKind;
+  }
+  if (cardCheck(hand) === 'fullHouse') {
+    return PokerRank.FullHouse;
+  }
+  if (cardCheck(hand) === 'threeOfKind') {
+    return PokerRank.ThreeOfKind;
+  }
+  if (cardCheck(hand) === 'twoPairs') {
+    return PokerRank.TwoPairs;
+  }
+  if (cardCheck(hand) === 'onePair') {
+    return PokerRank.OnePair;
+  }
+  if ([...new Set(suits)].length === 1) {
+    return PokerRank.Flush;
+  }
+  return PokerRank.HighCard;
 }
 
 

@@ -18,7 +18,7 @@
  *      'YTIRTSP',
  *   ];
  *   'ANGULAR'   => true   (first row)
- *   'REACT'     => true   (starting from the top-right R adn follow the ↓ ← ← ↓ )
+ *   'REACT'     => true   (starting from the top-right R and follow the ↓ ← ← ↓ )
  *   'UNDEFINED' => true
  *   'RED'       => true
  *   'STRING'    => true
@@ -28,6 +28,12 @@
  *   'NULL'      => false
  */
 function findStringInSnakingPuzzle(puzzle, searchStr) {
+  // for (let i = 0; i < puzzle.length; i += 1) {
+  //   if (searchStr === puzzle[i]) {
+  //     return true;
+  //   }
+  // }
+  // console.log(puzzle)
   throw new Error('Not implemented');
 }
 
@@ -46,7 +52,27 @@ function findStringInSnakingPuzzle(puzzle, searchStr) {
  *    'abc' => 'abc','acb','bac','bca','cab','cba'
  */
 function* getPermutations(chars) {
-  throw new Error('Not implemented');
+  const sequence = [];
+  function shuffle(chars) {
+    return chars.split('').sort(() => 0.5 - Math.random()).join('');
+  }
+  function factorial(n) {
+    let result = 1;
+    while(n) {
+      result *= n--;
+    }
+    return result;
+  }
+  for (let i = 0; i < factorial(chars.length); i += 1) {
+    const str = shuffle(chars);
+    if (!sequence.includes(str)) {
+      sequence.push(str);
+      yield str;
+    } else {
+      i -= 1;
+      shuffle(chars);
+    }
+  }
 }
 
 
@@ -68,6 +94,11 @@ function* getPermutations(chars) {
  *    [ 1, 6, 5, 10, 8, 7 ] => 18  (buy at 1,6,5 and sell all at 10)
  */
 function getMostProfitFromStockQuotes(quotes) {
+  // const max = Math.max(...quotes);
+  // if (quotes.indexOf(max) === 0) {
+  //   return 0;
+  // }
+  // return quotes.slice(0, quotes.indexOf(max)).reduce((a, b) => a + b);
   throw new Error('Not implemented');
 }
 
@@ -90,15 +121,43 @@ function UrlShortener() {
   this.urlAllowedChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
                           'abcdefghijklmnopqrstuvwxyz' +
                           "0123456789-_.~!*'();:@&=+$,/?#[]";
+  this.aliases = {
+    'https://': '~',
+    '.com': '@',
+    '.wikipedia.org/wiki/': 'wk',
+    '.org': '*',
+    'JavaScript': '!',
+    'Reference' : 'rf',
+    'Object': 'obj',
+    '/en': '[',
+    'price': '$'
+
+  };
 }
 
 UrlShortener.prototype = {
   encode(url) {
-    throw new Error('Not implemented');
+    let result = url;
+    const keys = Object.keys(this.aliases);
+    for (let i = 0; i < keys.length; i += 1) {
+      if (result.includes(keys[i])) {
+        result = result.replace(keys[i], this.aliases[keys[i]]);
+      }
+    }
+    return result;
   },
 
   decode(code) {
-    throw new Error('Not implemented');
+    let result = code;
+    const values = Object.values(this.aliases);
+    for (let i = 0; i < values.length; i += 1) {
+      if (result.includes(values[i])) {
+        result = result.replace(
+          values[i], Object.keys(this.aliases)[i]
+        );
+      }
+    }
+    return result;
   }
 };
 

@@ -17,7 +17,72 @@
  */
 function createCompassPoints(sides = ['N', 'E', 'S', 'W']) {
   /* use array of cardinal directions only! it is a default parameter! */
-  throw new Error('Not implemented');
+  const result = [];
+  const getSide = (sides, angle) => {
+    if (!(angle % 90)) {
+      return sides[angle / 90];
+    }
+    const mainSideIndex = Math.floor(angle / 90);
+    const mainDirection = sides[mainSideIndex];
+    if (angle % 90 === 11.25) {
+      return `${mainDirection}b${sides[mainSideIndex + 1] || sides[0]}`;
+    } else if (angle % 90 === 22.5) {
+      if (angle % 180 === 112.5) {
+        return `${mainDirection}${
+          sides[mainSideIndex + 1] || sides[0]
+        }${mainDirection}`;
+      }
+      return `${mainDirection.repeat(2)}${sides[mainSideIndex + 1]}`;
+    } else if (angle % 90 === 33.75) {
+      if (angle % 180 === 33.75) {
+        return `${mainDirection}${
+          sides[mainSideIndex + 1] || sides[0]
+        }b${mainDirection}`;
+      }
+      return `${
+        sides[mainSideIndex + 1] || sides[0]
+      }${mainDirection}b${mainDirection}`;
+    } else if (angle % 90 === 45) {
+      if (angle % 180 === 45) {
+        return `${mainDirection}${
+          sides[mainSideIndex + 1] || sides[0]
+        }`;
+      }
+      return `${sides[mainSideIndex + 1] || sides[0]}${mainDirection}`;
+    } else if (angle % 90 === 56.25) {
+      if (angle % 180 === 56.25) {
+        return `${mainDirection}${
+          sides[mainSideIndex + 1] || sides[0]
+        }b${
+          sides[mainSideIndex + 1] || sides[0]
+        }`;
+      }
+      return `${
+        sides[mainSideIndex + 1] || sides[0]
+      }${mainDirection}b${
+        sides[mainSideIndex + 1] || sides[0]
+      }`;
+    } else if (angle % 90 === 67.5) {
+      if (angle % 180 === 67.5) {
+        return `${sides[mainSideIndex + 1]}${mainDirection}${
+          sides[mainSideIndex + 1]
+        }`;
+      }
+      return `${
+        (sides[mainSideIndex + 1] || sides[0]).repeat(2)
+      }${mainDirection}`;
+    } else if (angle % 90 === 78.75) {
+      return `${sides[mainSideIndex + 1] || sides[0]}b${mainDirection}`;
+    }
+  };
+  for (let i = 0; i < 360; i += 11.25) {
+    const obj = {
+      abbreviation: getSide(sides, i),
+      azimuth: i
+    };
+    result.push(obj);
+  }
+  return result;
 }
 
 
@@ -26,7 +91,7 @@ function createCompassPoints(sides = ['N', 'E', 'S', 'W']) {
  * See https://en.wikipedia.org/wiki/Bash_(Unix_shell)#Brace_expansion
  *
  * In the input string, balanced pairs of braces containing comma-separated substrings
- * represent alternations that specify multiple alternatives which are to appear 
+ * represent alternations that specify multiple alternatives which are to appear
  * at that position in the output.
  *
  * @param {string} str
@@ -63,7 +128,7 @@ function* expandBraces(str) {
 /**
  * Returns the ZigZag matrix
  *
- * The fundamental idea in the JPEG compression algorithm is to sort coefficient 
+ * The fundamental idea in the JPEG compression algorithm is to sort coefficient
  * of given image by zigzag path and encode it.
  * In this task you are asked to implement a simple method to create a zigzag square matrix.
  * See details at https://en.wikipedia.org/wiki/JPEG#Entropy_coding
@@ -89,7 +154,33 @@ function* expandBraces(str) {
  *
  */
 function getZigZagMatrix(n) {
-  throw new Error('Not implemented');
+  const matrix = Array.from({length: n}, v => []);
+  let i = 1;
+  let j = 1;
+  for (let k = 0; k < n * n; k += 1) {
+    matrix[i-1][j-1] = k;
+    if ((i + j) % 2 === 0) {
+      if (j < n) {
+        j += 1;
+      } else {
+        i += 2;
+      }
+      if (i > 1) {
+        i -= 1;
+      }
+    } else {
+      if (i < n) {
+        i += 1;
+      }
+      else {
+        j += 2;
+      }
+      if (j > 1) {
+        j--;
+      }
+    }
+  }
+  return matrix;
 }
 
 
@@ -98,7 +189,7 @@ function getZigZagMatrix(n) {
  * Dominoes details see at: https://en.wikipedia.org/wiki/Dominoes
  *
  * Each domino tile presented as an array [x,y] of tile value.
- * For example, the subset [1, 1], [2, 2], [1, 2] can be arranged in a row 
+ * For example, the subset [1, 1], [2, 2], [1, 2] can be arranged in a row
  *  (as [1, 1] followed by [1, 2] followed by [2, 2]),
  * while the subset [1, 1], [0, 3], [1, 4] can not be arranged in one row.
  * NOTE that as in usual dominoes playing any pair [i, j] can also be treated as [j, i].
@@ -115,7 +206,24 @@ function getZigZagMatrix(n) {
  *
  */
 function canDominoesMakeRow(dominoes) {
-  throw new Error('Not implemented');
+  const arr = [];
+  arr.push(dominoes[0]);
+  dominoes = dominoes.filter(v => v !== arr[0]);
+  for (let i = 0; i < dominoes.length; i += 1) {
+    if (dominoes[i].includes(arr[0][1])) {
+      if (dominoes[i][1] === arr[0][1]) {
+        dominoes[i].reverse();
+      }
+      arr.pop();
+      arr.push(dominoes[i]);
+      dominoes = dominoes.filter(v => v !== arr[0]);
+      i = -1;
+    }
+    if (!dominoes.length) {
+      return true;
+    }
+  }
+  return false;
 }
 
 
@@ -124,10 +232,10 @@ function canDominoesMakeRow(dominoes) {
  *
  * A format for expressing an ordered list of integers is to use a comma separated list of either:
  *   - individual integers
- *   - or a range of integers denoted by the starting integer separated from the end 
+ *   - or a range of integers denoted by the starting integer separated from the end
  *     integer in the range by a dash, '-'.
  *     (The range includes all integers in the interval including both endpoints)
- *     The range syntax is to be used only for, and for every range that expands to 
+ *     The range syntax is to be used only for, and for every range that expands to
  *     more than two values.
  *
  * @params {array} nums

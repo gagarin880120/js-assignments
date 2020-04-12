@@ -25,7 +25,7 @@
  *
  */
 function getComposition(f, g) {
-  throw new Error('Not implemented');
+  return x => f(g(x));
 }
 
 
@@ -46,7 +46,7 @@ function getComposition(f, g) {
  *
  */
 function getPowerFunction(exponent) {
-  throw new Error('Not implemented');
+  return x => Math.pow(x, exponent);
 }
 
 
@@ -64,7 +64,13 @@ function getPowerFunction(exponent) {
  *   getPolynom()      => null
  */
 function getPolynom() {
-  throw new Error('Not implemented');
+  const args = [...arguments];
+  return function(x) {
+    return args.length === 3 ?
+      args[0] * Math.pow(x, 2) + args[1] * x + args[2] :
+      args.length === 2 ? args[0] * x + args[1] : args.length === 1 ? args[0]
+        : null;
+  };
 }
 
 
@@ -83,7 +89,15 @@ function getPolynom() {
  *   memoizer() => the same random number  (next run, returns the previous cached result)
  */
 function memoize(func) {
-  throw new Error('Not implemented');
+  return (...args) => {
+    const key = JSON.stringify(args);
+    func.memory = func.memory || {};
+
+    if (func.memory[key]) {
+      return func.memory[key];
+    }
+    return func.memory[key] = func(...args);
+  };
 }
 
 
@@ -103,7 +117,7 @@ function memoize(func) {
  * retryer() => 2
  */
 function retry(func, attempts) {
-  throw new Error('Not implemented');     
+  throw new Error('Not implemented');
 }
 
 
@@ -131,7 +145,12 @@ function retry(func, attempts) {
  *
  */
 function logger(func, logFunc) {
-  throw new Error('Not implemented');
+  return function(...args) {
+    logFunc(func.name + `(${args.map(v => JSON.stringify(v))}) starts`);
+    const result = func(...args);
+    logFunc(func.name + `(${args.map(v => JSON.stringify(v))}) ends`);
+    return result;
+  };
 }
 
 
@@ -148,13 +167,13 @@ function logger(func, logFunc) {
  *   partialUsingArguments(fn, 'a','b','c')('d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
-function partialUsingArguments(fn) {
-  throw new Error('Not implemented');
+function partialUsingArguments(fn, ...args1) {
+  return (...args) => fn(...args1, ...args);
 }
 
 
 /**
- * Returns the id generator function that returns next integer starting from specified 
+ * Returns the id generator function that returns next integer starting from specified
  * number every time when invoking.
  *
  * @param {Number} startFrom
@@ -171,7 +190,7 @@ function partialUsingArguments(fn) {
  *   getId10() => 11
  */
 function getIdGeneratorFunction(startFrom) {
-  throw new Error('Not implemented');
+  return () => startFrom++;
 }
 
 module.exports = {

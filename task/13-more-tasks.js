@@ -12,7 +12,8 @@
  *   'abcdefghijklmnop',  'lmnopqrstuvwxyz'  => 'abcdefghijklmnopqrstuvwxyz'
  */
 function distinctLettersString(value1, value2) {
-  throw new Error('Not implemented');
+  const arr = `${value1}${value2}`.split();
+  return [...new Set(...arr)].sort().join('');
 }
 
 
@@ -29,7 +30,12 @@ function distinctLettersString(value1, value2) {
  */
 
 function lowerLetters(value) {
-  throw new Error('Not implemented');
+  const arr = value.split('')
+    .filter(v => v.charCodeAt(0) >= 97 && v.charCodeAt(0) <= 122);
+  return arr.reduce((acc, val) => {
+    acc[val] = arr.filter(v => v === val).length;
+    return acc;
+  }, {});
 }
 
 /**
@@ -51,7 +57,14 @@ function lowerLetters(value) {
  */
 
 function titleCaseConvert(title, minorWords) {
-  throw new Error('Not implemented');
+  const arr = title.split(' ').map(v => v.toLowerCase());
+  for (let i = 1; i < arr.length; i += 1) {
+    if (!minorWords || !minorWords.toLowerCase().includes(arr[i])) {
+      arr[i] = arr[i][0].toUpperCase() + arr[i].slice(1);
+    }
+  }
+  arr[0] = arr[0][0].toUpperCase() + arr[0].slice(1);
+  return arr.join(' ');
 }
 
 /**
@@ -72,7 +85,56 @@ function titleCaseConvert(title, minorWords) {
  */
 
 function calcRPN(expr) {
-  throw new Error('Not implemented');
+  if (!expr.length) {
+    return 0;
+  }
+  const arr = expr.split(' ');
+  const operands = ['+', '-', '*', '/' ];
+
+  if (!arr.includes(operands[0])
+     && !arr.includes(operands[1])
+     && !arr.includes(operands[2])
+     && !arr.includes(operands[3])) {
+    return arr[arr.length - 1];
+  }
+
+  const stack = [];
+  let i = 0;
+
+  stack.push(arr[i]);
+  i += 1;
+
+  while(i <= arr.length) {
+    const item = arr[i];
+    var index = operands.indexOf(item);
+    if (index < 0) {
+      stack.push(arr[i]);
+    } else {
+      if (index === 0) {
+        const a = parseInt(stack.splice(-1)[0], 10);
+        const b = parseInt(stack.splice(-1)[0], 10);
+        stack.push(a + b);
+      }
+      if (index === 1) {
+        const a = parseInt(stack.splice(-1)[0], 10);
+        const b = parseInt(stack.splice(-1)[0], 10);
+        stack.push(b - a);
+      }
+      if (index === 2) {
+        const a = parseInt(stack.splice(-1)[0], 10);
+        const b = parseInt(stack.splice(-1)[0], 10);
+        stack.push(a * b);
+      }
+      if (index === 3) {
+        const a = parseInt(stack.splice(-1)[0], 10);
+        const b = parseInt(stack.splice(-1)[0], 10);
+        stack.push(b / a);
+      }
+    }
+    i += 1;
+  }
+
+  return parseInt(stack[0], 10);
 }
 
 module.exports = {
