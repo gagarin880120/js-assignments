@@ -32,7 +32,22 @@
  *
  */
 function* get99BottlesOfBeer() {
-  throw new Error('Not implemented');
+  let i = 100;
+  while(i > 0) {
+    yield `${
+      (i -= 1) === 0 ? 'No more' : i
+    } ${
+      i === 1 ? 'bottle' : 'bottles'
+    } of beer on the wall, ${
+      i === 0 ? 'no more' : i
+    } ${i === 1 ? 'bottle' : 'bottles'} of beer.`;
+    yield `${
+      i === 0 ? 'Go to the store and buy some more'
+        : 'Take one down and pass it around'
+    }, ${
+      i === 1 ? 'no more' : i === 0 ? '99' : i - 1
+    } ${i === 2 ? 'bottle' : 'bottles'} of beer on the wall.`;
+  }
 }
 
 
@@ -46,7 +61,13 @@ function* get99BottlesOfBeer() {
  *
  */
 function* getFibonacciSequence() {
-  throw new Error('Not implemented');
+  let prev = 0, next = 1;
+  for(let i = 0; i < 39; i++){
+    yield prev;
+    const temp = next;
+    next = prev + next;
+    prev = temp;
+  }
 }
 
 
@@ -81,7 +102,18 @@ function* getFibonacciSequence() {
  *
  */
 function* depthTraversalTree(root) {
-  throw new Error('Not implemented');
+  const stack=[root];
+  let node = {};
+  while(stack.length > 0) {
+    node = stack.pop();
+    yield(node);
+    if (!node.children) {
+      continue;
+    }
+    for (let i = node.children.length - 1; i >= 0; i -= 1) {
+      stack.push(node.children[i]);
+    }
+  }
 }
 
 
@@ -108,6 +140,19 @@ function* depthTraversalTree(root) {
  */
 function* breadthTraversalTree(root) {
   throw new Error('Not implemented');
+  // const queue = [root];
+
+  // while(queue.length > 0) {
+  //   const node = queue.shift();
+  //   yield node;
+
+  //   if (!node.children) {
+  //     continue;
+  //   }
+  //   for(let i = 0; i < node.children.length; i++) {
+  //     queue.push(node.children[i]);
+  //   }
+  // }
 }
 
 
@@ -125,7 +170,17 @@ function* breadthTraversalTree(root) {
  *   [ 1, 3, 5, ... ], [ -1 ] => [ -1, 1, 3, 5, ...]
  */
 function* mergeSortedSequences(source1, source2) {
-  throw new Error('Not implemented');
+  let arr = [];
+  const src1 = source1();
+  const src2 = source2();
+  while(mergeSortedSequences()) {
+    arr = [src1.next().value, src2.next().value]
+      .filter(v => v !== undefined)
+      .sort((a, b) => a - b);
+    for (let i = 0; i < arr.length; i += 1) {
+      yield arr[i];
+    }
+  }
 }
 
 module.exports = {
