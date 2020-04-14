@@ -128,7 +128,7 @@ function getAngleBetweenVectors(x1, y1, x2, y2) {
  *     0     => 0
  */
 function getLastDigit(value) {
-  return +value.toString().slice(-1);
+  return value % 10;
 }
 
 
@@ -207,8 +207,8 @@ function isPrime(n) {
   if (n === 1) result = false;
   if (n === 2) result = true;
   for (let i = 2; i < n; i += 1) {
-    result = Boolean(n % i);
-    if (result === false) break;
+    result = n % i !== 0;
+    if (!result) break;
   }
   return result;
 }
