@@ -28,13 +28,81 @@
  *   'NULL'      => false
  */
 function findStringInSnakingPuzzle(puzzle, searchStr) {
-  // for (let i = 0; i < puzzle.length; i += 1) {
-  //   if (searchStr === puzzle[i]) {
-  //     return true;
-  //   }
-  // }
-  // console.log(puzzle)
-  throw new Error('Not implemented');
+  const copy = puzzle.slice(0);
+
+  function setIndex(arr, str, n) {
+    for(let i = 0; i < arr.length; i += 1) {
+      if (arr[i].includes(str[n])) {
+        const newArr = arr[i].split('');
+        newArr.splice(arr[i].indexOf(str[n]), 1, n);
+        arr[i] = newArr.join('');
+        return [i, arr[i].indexOf(n)];
+      }
+    }
+  }
+
+  const zero = setIndex(copy, searchStr, 0);
+  let counter = 0;
+  if (zero) {
+    counter += 1;
+  } else {
+    return false;
+  }
+  let current = zero;
+
+  for(let i = 1; i < searchStr.length; i += 1) {
+    if (copy[current[0]][current[1] + 1]) {
+      if (copy[current[0]][current[1] + 1] === searchStr[i]) {
+        current = [current[0], current[1] + 1];
+        counter += 1;
+        if (counter === searchStr.length) {
+          return true;
+        }
+        continue;
+      }
+    }
+
+    if (copy[current[0]][current[1] - 1]) {
+      if (copy[current[0]][current[1] - 1] === searchStr[i]) {
+        current = [current[0], current[1] - 1];
+        counter += 1;
+        if (counter === searchStr.length) {
+          return true;
+        }
+        continue;
+      }
+    }
+
+    if (copy[current[0] + 1]) {
+      if (copy[current[0] + 1][current[1]] === searchStr[i]) {
+        current = [current[0] + 1, current[1]];
+        counter += 1;
+        if (counter === searchStr.length) {
+          return true;
+        }
+        continue;
+      }
+    }
+
+    if (copy[current[0] - 1]) {
+      if (copy[current[0] - 1][current[1]] === searchStr[i]) {
+        current = [current[0] - 1, current[1]];
+        counter += 1;
+        if (counter === searchStr.length) {
+          return true;
+        }
+        continue;
+      }
+    }
+
+    current = setIndex(copy, searchStr, 0);
+    counter = 1;
+    if (!current) {
+      return false;
+    }
+    i = 0;
+  }
+  return false;
 }
 
 
