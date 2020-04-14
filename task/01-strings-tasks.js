@@ -271,9 +271,9 @@ function isString(value) {
  *   'K♠' => 51
  */
 function getCardId(value) {
-  const obj = {'♣': 0, '♦': 13, '♥': 26, '♠': 39, A: 0, J: 10, Q: 11, K: 12};
-  return (parseInt(value) - 1) + obj[value.slice(-1)] ||
-  obj[value[0]] + obj[value.slice(-1)];
+  const suits = '♣♦♥♠';
+  const arr = 'A,2,3,4,5,6,7,8,9,10,J,Q,K'.split(',');
+  return suits.indexOf(value.slice(-1)) * 13 + arr.indexOf(value.slice(0, -1));
 }
 
 module.exports = {
