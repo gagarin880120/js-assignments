@@ -55,10 +55,11 @@ function getJSON(obj) {
  *
  */
 function fromJSON(proto, json) {
+  // вот здесь второй тест проходит, а первый ни в какую,
+  // хотя если в консоль вывожу, то результат какой надо получается.
+  // console.log(new proto.constructor(...Object.values(JSON.parse(json))))
+  // return new proto.constructor(...Object.values(JSON.parse(json)));
   throw new Error('Not implemented');
-  // console.log(Object.setPrototypeOf(JSON.parse(json), proto) instanceof Rectangle);
-  // return new proto(JSON.parse(json));
-
 }
 
 
