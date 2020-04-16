@@ -92,7 +92,7 @@ function getSumBetweenNumbers(n1, n2) {
  *   10,10,10 =>  true
  */
 function isTriangle(a, b, c) {
-  return (a + b <= c || a + c <= b || b + c <= a) ? false : true;
+  return !(a + b <= c || a + c <= b || b + c <= a);
 }
 
 
@@ -129,11 +129,8 @@ function isTriangle(a, b, c) {
  *
  */
 function doRectanglesOverlap(rect1, rect2) {
-  if (Math.abs(rect2.top - rect1.top) <= rect1.height
-  && Math.abs(rect2.left - rect1.left) <= rect1.width) {
-    return true;
-  }
-  return false;
+  return Math.abs(rect2.top - rect1.top) <= rect1.height
+  && Math.abs(rect2.left - rect1.left) <= rect1.width;
 }
 
 
@@ -164,8 +161,8 @@ function doRectanglesOverlap(rect1, rect2) {
  *
  */
 function isInsideCircle(circle, point) {
-  return Math.sqrt(Math.pow(Math.abs(point.x - circle.center.x), 2)
-    + Math.pow(Math.abs(point.y - circle.center.y), 2)) < circle.radius;
+  return Math.hypot(Math.abs(point.x - circle.center.x),
+    Math.abs(point.y - circle.center.y)) < circle.radius;
 }
 
 
@@ -373,33 +370,37 @@ function isBracketsBalanced(str) {
  */
 function timespanToHumanString(startDate, endDate) {
   const diff = endDate - startDate; // diff in ms
+  const minute = 60000;
+  const hour = 3600000;
+  const day = 86400000;
+  const month = 2592000000;
   if ( diff <= 45000) {
     return 'a few seconds ago';
-  } else if (diff <= 90000) {
+  } else if (diff <= 1.5 * minute) {
     return 'a minute ago';
-  } else if (diff <= 2700000) {
-    return diff < 120000 ?
-      '2 minutes ago' : `${Math.floor(diff / 60000)} minutes ago`;
-  } else if (diff <= 5400000) {
+  } else if (diff <= 45 * minute) {
+    return diff < minute * 2 ?
+      '2 minutes ago' : `${Math.floor(diff / minute)} minutes ago`;
+  } else if (diff <= 1.5 * hour) {
     return 'an hour ago';
-  } else if (diff <= 79200000) {
-    return diff < 7200000 ? '2 hours ago' : `${(diff / 3600000) % 0.5 ?
-      Math.round(diff / 3600000) : Math.floor(diff / 3600000)} hours ago`;
-  } else if (diff <= 129600000) {
+  } else if (diff <= 22 * hour) {
+    return diff < 2 * hour ? '2 hours ago' : `${(diff / hour) % 0.5 ?
+      Math.round(diff / hour) : Math.floor(diff / hour)} hours ago`;
+  } else if (diff <= day * 1.5) {
     return 'a day ago';
-  } else if (diff <= 2160000000) {
-    return `${(diff / 3600000) % 0.5 ? Math.round(diff / (3600000 * 24))
-      : Math.floor(diff / (3600000 * 24))} days ago`;
-  } else if (diff <= 3888000000) {
+  } else if (diff <= 25 * day) {
+    return `${(diff / hour) % 0.5 ? Math.round(diff / day)
+      : Math.floor(diff / day)} days ago`;
+  } else if (diff <= 45 * day) {
     return 'a month ago';
-  } else if (diff <= 2.981e+10) {
-    return `${(diff / (3600000 * 24 * 30)) % 0.5 ?
-      Math.round(diff / (3600000 * 24 * 30))
-      : Math.floor(diff / (3600000 * 24 * 30))} months ago`;
-  } else if(diff <= 4.709e+10) {
+  } else if (diff <= 345 * day) {
+    return `${(diff / month) % 0.5 ?
+      Math.round(diff / month)
+      : Math.floor(diff / month)} months ago`;
+  } else if(diff <= 545 * day) {
     return 'a year ago';
   } else {
-    return `${Math.floor(diff / (3600000 * 24 * 365))} years ago`;
+    return `${Math.floor(diff / (365 * day))} years ago`;
   }
 }
 
