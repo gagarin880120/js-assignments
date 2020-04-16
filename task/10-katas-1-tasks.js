@@ -239,7 +239,7 @@ function canDominoesMakeRow(dominoes) {
  *     more than two values.
  *
  * @params {array} nums
- * @return {bool}
+ * @return {string}
  *
  * @example
  *
@@ -249,7 +249,28 @@ function canDominoesMakeRow(dominoes) {
  * [ 1, 2, 4, 5]          => '1,2,4,5'
  */
 function extractRanges(nums) {
-  throw new Error('Not implemented');
+  const result = [];
+  function getRange(n, arr) {
+    const range = [];
+    range.push(arr[n]);
+    for (let i = n; i < arr.length; i += 1) {
+      if (arr[i] + 1 === arr[i + 1]) {
+        range.push(arr[i + 1]);
+      } else {
+        break;
+      }
+    }
+    return range.length >= 3 ?
+      `${range[0]}-${range[range.length - 1]}` : arr[n];
+  }
+  for (let i = 0; i < nums.length; i += 1) {
+    const str = getRange(i, nums);
+    result.push(str);
+    i = `${str}`.includes('-') ?
+      nums.indexOf(+str.slice(str.indexOf('-') + 1)) :
+      nums.indexOf(str);
+  }
+  return result.join(',');
 }
 
 module.exports = {
