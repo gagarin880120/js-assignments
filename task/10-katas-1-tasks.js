@@ -121,7 +121,96 @@ function createCompassPoints(sides = ['N', 'E', 'S', 'W']) {
  *   'nothing to do' => 'nothing to do'
  */
 function* expandBraces(str) {
-  throw new Error('Not implemented');
+  function haveNested(srcStr, n) {
+    for (let i = n; i < srcStr.length; i += 1) {
+      if (srcStr[i] === '}') {
+        return false;
+      }
+      if (srcStr[i] === '{') {
+        return true;
+      }
+    }
+  }
+
+  function getNested(srcStr, n) {
+    let counter = 0;
+    const obj = {};
+    for (let i = n; i < srcStr.length; i += 1) {
+      if (srcStr[i] === '}') {
+        counter += 1;
+      }
+      if (counter === 2) {
+        obj.str = srcStr.slice(n, i);
+        obj.num = i;
+        break;
+      }
+    }
+    return obj;
+  }
+
+  function getResults(string) {
+    const obj = {};
+    let key = -1;
+    let isInside = false;
+    let result = '';
+
+    if (!string.includes('}')) {
+      return [string];
+    }
+
+    for (let i = 0; i < string.length; i += 1) {
+      if (!isInside) {
+        if (string[i] !== '{') {
+          result += string[i];
+        }
+      }
+      if (string[i] === '{') {
+        if (haveNested(string, i + 1)) {
+          key += 1;
+          obj[key] = [...new Set(
+            getResults(getNested(string, i + 1).str).join(',').split(',')
+          )].join(',');
+          i = getNested(string, i + 1).num;
+        } else {
+          key += 1;
+          obj[key] = '';
+        }
+        isInside = true;
+        result += key;
+      }
+      if (isInside) {
+        if (string[i] !== '{' && string[i] !== '}') {
+          obj[key] += string[i];
+        }
+      }
+      if (string[i] === '}') {
+        isInside = false;
+      }
+    }
+    const results = [];
+    const resultsLength = Object.keys(obj).length > 1 ?
+      Object.values(obj).map(v => v.split(','))
+        .reduce((a, b) => a.length * b.length) :
+      obj[0].split(',').length;
+
+    for (let i = 0; i < resultsLength; i += 1) {
+      const resStr = result.split('')
+        .map(v => Object.keys(obj).includes(v)
+          ? obj[v].split(',').sort(() => 0.5 - Math.random())[0] : v)
+        .join('');
+      if (!results.includes(resStr)) {
+        results.push(resStr);
+      } else {
+        i -= 1;
+      }
+    }
+    return results;
+  }
+
+  const res = getResults(str);
+  for (let i = 0; i < res.length; i += 1) {
+    yield res[i];
+  }
 }
 
 
