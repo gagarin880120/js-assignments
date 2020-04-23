@@ -250,17 +250,11 @@ function* getFigureRectangles(figure) {
   if (!figure.includes('-') && !figure.includes('|')) {
     for (let i = 0; i < arr.length; i += 1) {
       let counter = 0;
-      let leftTopCorner = 0;
-      let rightTopCorner = 0;
       for (let j = 0; j < arr[i].length; j += 1) {
         if (arr[i][j] === '+' && arr[i + 1] && arr[i + 1][j] === '+') {
           counter += 1;
         }
-        if (counter === 1 && arr[i + 1][j] === '+') {
-          leftTopCorner = j;
-        }
         if (counter === 2) {
-          rightTopCorner = j;
           const rect = `++\n++\n`;
           results.push(rect);
           j -= 1;
