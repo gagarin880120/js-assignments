@@ -162,12 +162,15 @@ function* getPermutations(chars) {
  *    [ 1, 6, 5, 10, 8, 7 ] => 18  (buy at 1,6,5 and sell all at 10)
  */
 function getMostProfitFromStockQuotes(quotes) {
-  // const max = Math.max(...quotes);
-  // if (quotes.indexOf(max) === 0) {
-  //   return 0;
-  // }
-  // return quotes.slice(0, quotes.indexOf(max)).reduce((a, b) => a + b);
-  throw new Error('Not implemented');
+  let result = 0;
+  while (quotes.length) {
+    const max = Math.max(...quotes);
+    const index = quotes.lastIndexOf(max);
+    result = quotes.slice(0, index)
+      .reduce((acc, val) => acc += max - val, result);
+    quotes = quotes.slice(index + 1);
+  }
+  return result;
 }
 
 

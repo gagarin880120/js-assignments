@@ -245,7 +245,65 @@ function getPokerHandRank(hand) {
  *    '+-------------+\n'
  */
 function* getFigureRectangles(figure) {
-  throw new Error('Not implemented');
+  const arr = figure.split('\n').filter(Boolean);
+  const results = [];
+  if (!figure.includes('-') && !figure.includes('|')) {
+    for (let i = 0; i < arr.length; i += 1) {
+      let counter = 0;
+      let leftTopCorner = 0;
+      let rightTopCorner = 0;
+      for (let j = 0; j < arr[i].length; j += 1) {
+        if (arr[i][j] === '+' && arr[i + 1] && arr[i + 1][j] === '+') {
+          counter += 1;
+        }
+        if (counter === 1 && arr[i + 1][j] === '+') {
+          leftTopCorner = j;
+        }
+        if (counter === 2) {
+          rightTopCorner = j;
+          const rect = `++\n++\n`;
+          results.push(rect);
+          j -= 1;
+          counter = 0;
+        }
+      }
+    }
+  }
+
+  function createRectangle(str, n) {
+    const lateral = '|' + ' '.repeat(str.length - 2) + '|' + '\n';
+    return str + '\n' + lateral.repeat(n) + str + '\n';
+  }
+
+  for (let i = 0; i < arr.length; i += 1) {
+    if (arr[i].includes('+')) {
+      let counter = 0;
+      let leftTopCorner = 0;
+      let rightTopCorner = 0;
+      for (let j = 0; j < arr[i].length; j += 1) {
+        if (arr[i][j] === '+' && arr[i + 1] && arr[i + 1][j] === '|') {
+          counter += 1;
+        }
+        if (counter === 1 && arr[i + 1][j] === '|') {
+          leftTopCorner = j;
+        }
+        if (counter === 2) {
+          rightTopCorner = j;
+          const h = arr.slice(i + 1).findIndex(v => v.includes('+'));
+          if (h > 0) {
+            const str = `+${'-'.repeat(rightTopCorner - leftTopCorner - 1)}+`;
+            results.push(createRectangle(str, h));
+            j -= 1;
+            counter = 0;
+          }
+        }
+      }
+    }
+  }
+  for (let i = 0; i < results.length; i += 1) {
+    yield results[i];
+  }
+  // throw new Error('Not implemented');
 }
 
 module.exports = {
