@@ -297,7 +297,6 @@ function* getFigureRectangles(figure) {
   for (let i = 0; i < results.length; i += 1) {
     yield results[i];
   }
-  // throw new Error('Not implemented');
 }
 
 module.exports = {
