@@ -24,7 +24,7 @@
 function Rectangle(width, height) {
   this.width = width;
   this.height = height;
-  this.getArea = () => this.width * this.height;
+  this.__proto__.getArea = () => this.width * this.height;
 }
 
 
@@ -55,11 +55,7 @@ function getJSON(obj) {
  *
  */
 function fromJSON(proto, json) {
-  // вот здесь второй тест проходит, а первый ни в какую,
-  // хотя если в консоль вывожу, то результат какой надо получается.
-  // console.log(new proto.constructor(...Object.values(JSON.parse(json))))
-  // return new proto.constructor(...Object.values(JSON.parse(json)));
-  throw new Error('Not implemented');
+  return Object.setPrototypeOf(JSON.parse(json), proto);
 }
 
 
@@ -118,34 +114,115 @@ function fromJSON(proto, json) {
  *  For more examples see unit tests.
  */
 
-const cssSelectorBuilder = {
+class Builder {
+  constructor() {
+    this.result = '';
+  }
 
   element(value) {
-    throw new Error('Not implemented');
-  },
+    this.errorHandler(1);
+    this.result += value;
+    this.index = 1;
+    return this;
+  }
 
   id(value) {
-    throw new Error('Not implemented');
-  },
+    this.errorHandler(2);
+    this.result += `#${value}`;
+    this.index = 2;
+    return this;
+  }
 
   class(value) {
-    throw new Error('Not implemented');
-  },
+    this.errorHandler(3);
+    this.result += `.${value}`;
+    this.index = 3;
+    return this;
+  }
 
   attr(value) {
-    throw new Error('Not implemented');
-  },
+    this.errorHandler(4);
+    this.result += `[${value}]`;
+    this.index = 4;
+    return this;
+  }
 
   pseudoClass(value) {
-    throw new Error('Not implemented');
-  },
+    this.errorHandler(5);
+    this.result += `:${value}`;
+    this.index = 5;
+    return this;
+  }
 
   pseudoElement(value) {
-    throw new Error('Not implemented');
-  },
+    this.errorHandler(6);
+    this.result += `::${value}`;
+    this.index = 6;
+    return this;
+  }
 
   combine(selector1, combinator, selector2) {
-    throw new Error('Not implemented');
+    this.result = `${
+      selector1.stringify()
+    } ${combinator} ${selector2.stringify()}`;
+    return this;
+  }
+
+  stringify() {
+    return this.result;
+  }
+
+  errorHandler(index) {
+    if (this.index > index) {
+      throw new Error(
+        'Selector parts should be arranged in the following order: ' +
+        'element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+    }
+    if (this.index === index && (index === 1 || index === 2 || index === 6)) {
+      throw new Error(
+        'Element, id and pseudo-element should not occur ' +
+        'more then one time inside the selector'
+      );
+    }
+  }
+}
+
+const cssSelectorBuilder = {
+  element: function(value) {
+    const builder = new Builder();
+    builder.element(value);
+    return builder;
+  },
+  id: function(value) {
+    const builder = new Builder();
+    builder.id(value);
+    return builder;
+  },
+  class: function(value) {
+    const builder = new Builder();
+    builder.class(value);
+    return builder;
+  },
+  attr: function(value) {
+    const builder = new Builder();
+    builder.attr(value);
+    return builder;
+  },
+  pseudoClass: function(value) {
+    const builder = new Builder();
+    builder.pseudoClass(value);
+    return builder;
+  },
+  pseudoElement: function(value) {
+    const builder = new Builder();
+    builder.pseudoElement(value);
+    return builder;
+  },
+  combine: function(selector1, combinator, selector2) {
+    const builder = new Builder();
+    builder.combine(selector1, combinator, selector2);
+    return builder;
   }
 };
 
