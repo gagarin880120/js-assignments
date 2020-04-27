@@ -139,20 +139,18 @@ function* depthTraversalTree(root) {
  *
  */
 function* breadthTraversalTree(root) {
-  throw new Error('Not implemented');
-  // const queue = [root];
+  const queue=[root];
+  let e = 0;
+  while(queue.length > e) {
+    const node = queue[e++];
+    yield node;
 
-  // while(queue.length > 0) {
-  //   const node = queue.shift();
-  //   yield node;
-
-  //   if (!node.children) {
-  //     continue;
-  //   }
-  //   for(let i = 0; i < node.children.length; i++) {
-  //     queue.push(node.children[i]);
-  //   }
-  // }
+    if (node.children) {
+      for (let i = 0; i < node.children.length; i += 1) {
+        queue.push(node.children[i]);
+      }
+    }
+  }
 }
 
 
